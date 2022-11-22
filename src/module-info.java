@@ -1,0 +1,9 @@
+/**
+ * 
+ */
+/**
+ * @author max
+ *
+ */
+module PasswordCracker {
+}
