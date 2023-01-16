@@ -1,0 +1,11 @@
+TODO
+
+
+create dictionary class (will have a method to check if a hash exists in the 
+dictionary as a key. if it does it will retur the value for the key. the dictionary 
+has two ways of loading key values:
+It can generate an exhaustive list from an alphabet
+Or it can load passwords in from a file. 
+When instantiated it will have a method that looks up hashes in the dictionary. 
+
+Main class will have 
