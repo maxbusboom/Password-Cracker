@@ -23,7 +23,7 @@ public class PDict {
 	static String defaultHashFunction = "SHA-256"; //This specifies which hash function we will use. we use it 
 	String hashFunction; 
 
-	File cacheFile = new File("candidates.txt"); //creates a new file with the name candidates.txt
+	File cacheFile = new File("candidates.ser"); //creates a new file with the name candidates.txt
 
 	boolean testing = false;// a flag that specifies if the program is being tested or not
 	int test_n = 1000;// the amount of entries in the hashmap during testing
@@ -159,29 +159,33 @@ public class PDict {
 	}
 
 	
+
 	/**
-	 * Write file via properties, via https://stackoverflow.com/a/12748101
-	 * 
+	 * Write file via serializer, via https://stackoverflow.com/a/12748101
+	 *
 	 * @param none
 	 * @return none
-	 */ 
+	 */
 	void cacheDict() throws IOException {
-
-		Properties properties = new Properties(); //create object of properties class
-
-		System.out.println("Writing cache, also slow, ");
-
-		for (Map.Entry<String, String> entry : dict.entrySet()) {
-			properties.put(entry.getKey(), entry.getValue()); //puts all key-value pairs from hashmap called dict into properties.
-		}
-
-		properties.store(new FileOutputStream(cacheFile), null); //puts every item in properties into text file
-
+		
+		// Serialization code from https://beginnersbook.com/2013/12/how-to-serialize-hashmap-in-java/
+		
+		System.out.println("Writing candidates to disk, also slow.");
+		  try  {
+                 FileOutputStream fos =  new FileOutputStream(cacheFile);
+                 ObjectOutputStream oos = new ObjectOutputStream(fos);
+                 oos.writeObject(dict);
+                 oos.close();
+                 fos.close();
+                 System.out.printf("Serialized HashMap data is saved");
+          }catch(IOException ioe) {
+                 ioe.printStackTrace();
+           }
 	}
 
 	/**
 	 * puts the hashed version of plainText and plainText in the hashmap dict.
-	 * 
+	 *
 	 * @param plainText: the original unencoded string
 	 * @return none
 	 */
@@ -189,15 +193,22 @@ public class PDict {
 
 		System.out.println("Reading cache, this will be slow");
 
-		Properties properties = new Properties();//creates new instance of properties
-
-		properties.load(new FileInputStream(cacheFile)); //loads key-value pairs from cachefile using properties
-
-		for (String key : properties.stringPropertyNames()) {
-			dict.put(key, properties.get(key).toString()); //for every key-value pair add it to hashmap dict. 
-		}
-
+		 try {
+	         FileInputStream fis = new FileInputStream(cacheFile);
+	         ObjectInputStream ois = new ObjectInputStream(fis);
+	         dict = (HashMap<String, String>) ois.readObject();
+	         ois.close();
+	         fis.close();
+	      } catch(IOException ioe) {
+	         ioe.printStackTrace();
+	         return;
+	      } catch(ClassNotFoundException c) {
+	         System.out.println("Class not found");
+	         c.printStackTrace();
+	         return;
+	      }
 	}
+
 
 	/**
 	 * First, runs constructor with alphabet array list. A new object of class pdict is created.
